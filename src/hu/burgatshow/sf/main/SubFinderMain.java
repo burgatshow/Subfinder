@@ -79,9 +79,9 @@ public class SubFinderMain implements Serializable {
 			verboseMode = true;
 			System.out.println("Verbose mode enabled by argument -V or --verbose.");
 
-			System.out.println("Parsed arguments:");
+			printVerbose("Parsed arguments:");
 			for (String a : parsedArgs.keySet()) {
-				System.out.println("\t" + a + " = " + parsedArgs.get(a));
+				printVerbose("\t" + a + " = " + parsedArgs.get(a));
 			}
 		}
 
@@ -130,11 +130,11 @@ public class SubFinderMain implements Serializable {
 	private static void dumpHeaderAndFooter(boolean isHeader) {
 		System.out.println("\n\n=================================================");
 		if (isHeader) {
-			System.out.println("Subtitle Finder v0.0.0.0.6 (Speedster Tongue)");
+			System.out.println("Subtitle Finder v0.0.0.0.8 (Butterfly Cake)");
 			System.out.println("Author: burgatshow");
-			System.out.println(new SimpleDateFormat("'Start time': yyyy. MM. dd. HH:mm:ss").format(new Date()));
+			System.out.println(new SimpleDateFormat("'Start time': yyyy. MM. dd. HH:mm:ss.SSS").format(new Date()));
 		} else {
-			System.out.println("\n\nTool finished working, now go and Netflix and chill! Oh wait. :)\n\n");
+			System.out.println("\n\nAll tasks are completed. Bye!\n\n");
 		}
 		System.out.println("=================================================\n\n");
 	}
@@ -263,13 +263,13 @@ public class SubFinderMain implements Serializable {
 	 */
 	private static void loadSeriesMapping() throws IOException, IllegalArgumentException {
 		System.out.println(
-				String.format("\n#1 - Loading series mapping from configured file: %s", parsedArgs.get("mapping")));
+				String.format("\n#1 Loading series mapping from configured file: %s", parsedArgs.get("mapping")));
 
 		if (parsedArgs.get("mapping") == null || parsedArgs.get("mapping").isEmpty()) {
 			throw new IllegalArgumentException(
 					"ERROR: The provided mapping file path parameter is null or empty... Check it again!");
 		} else {
-			printVerbose("\t - The provided mapping file path seems OK.");
+			printVerbose("\tThe provided mapping file path seems OK.");
 		}
 
 		Path mappingFile = Paths.get(parsedArgs.get("mapping"));
@@ -277,14 +277,14 @@ public class SubFinderMain implements Serializable {
 			throw new IllegalArgumentException(
 					"ERROR: The provided mapping file is not a file, does not exist or it is hidden!");
 		} else {
-			printVerbose("\t - The mapping file on path is an existing, not hidden file. Testing read permission...");
+			printVerbose("\tThe mapping file on path is an existing, not hidden file. Testing read permission...");
 		}
 
 		if (!Files.isReadable(mappingFile)) {
 			throw new IllegalArgumentException(
 					"ERROR: The provided mapping file is not readable by the tool. Check the file permissions!");
 		} else {
-			printVerbose("\t - The file is readable by the tool, let's read...");
+			printVerbose("\tThe file is readable by the tool, let's read...");
 		}
 
 		InputStream input = new FileInputStream(mappingFile.toString());
@@ -301,9 +301,9 @@ public class SubFinderMain implements Serializable {
 			printVerbose(String.format("\t\t - %s: %s", entries.getKey(), entries.getValue()));
 		}
 
-		printVerbose(String.format("\t - A total of %s series loaded from the file.", seriesNameIdMap.size()));
+		printVerbose(String.format("\tA total of %s series loaded from the file.", seriesNameIdMap.size()));
 
-		System.out.println("#1 - Loading series mapping from configured file:  FINISHED!\n\n");
+		System.out.println("#1 FINISHED\n\n");
 	}
 
 	/**
@@ -313,14 +313,14 @@ public class SubFinderMain implements Serializable {
 	 * @throws IllegalArgumentException
 	 */
 	private static void fetchFilesInFolder() throws IOException, IllegalArgumentException {
-		System.out.println(
-				String.format("#2 - Fetching content of the provided directory: %s", parsedArgs.get("folder")));
+		System.out
+				.println(String.format("#2 Fetching content of the provided directory: %s", parsedArgs.get("folder")));
 
 		if (parsedArgs.get("folder") == null || parsedArgs.get("folder").isEmpty()) {
 			throw new IllegalArgumentException(
 					"ERROR: The provided working directory path parameter is null or empty... Check it again!");
 		} else {
-			printVerbose("\t - The provided folder path seems OK.");
+			printVerbose("\tThe provided folder path seems OK.");
 		}
 
 		Path videoFolder = Paths.get(parsedArgs.get("folder"));
@@ -328,15 +328,14 @@ public class SubFinderMain implements Serializable {
 			throw new IllegalArgumentException(
 					"ERROR: The provided content directory does not exist, it is hidden or not even a directory!");
 		} else {
-			printVerbose(
-					"\t - The content folder path is an existing, not hidden directory. Testing read permission...");
+			printVerbose("\tThe content folder path is an existing, not hidden directory. Testing read permission...");
 		}
 
 		if (!Files.isReadable(videoFolder)) {
 			throw new IllegalArgumentException(
 					"ERROR: The provided content directory is not readable by the tool. Check the file permissions!");
 		} else {
-			printVerbose("\t - The file is readable by the tool, let's read...");
+			printVerbose("\tThe file is readable by the tool, let's read...");
 		}
 
 		Pattern pattern = Pattern.compile("(.*)S([0-9]{1,2})E([0-9]{1,2})(.*)(720|1080|2160)(.*)-([a-zA-Z\\-]+)");
@@ -345,7 +344,7 @@ public class SubFinderMain implements Serializable {
 			String name = path.getFileName().toString();
 
 			if (name != null && !name.isEmpty()) {
-				printVerbose(String.format("\t\t - %s", name));
+				printVerbose(String.format("\t\t- %s", name));
 				Matcher matcher = pattern.matcher(name);
 				if (matcher.find()) {
 					SeriesInfo si = new SeriesInfo(name);
@@ -377,8 +376,9 @@ public class SubFinderMain implements Serializable {
 							filesize = p.toFile().length();
 
 							if (f[1].equalsIgnoreCase("mkv") && videoFileSizeLimit < filesize / 1024 / 1024) {
-								System.out.println(String.format("\t\t\t - Found video file: %s, filesize (MB): %d",
-										p.toString(), filesize / 1024 / 1024));
+								System.out.println(String.format(
+										"\t\t\t> Found video file:\n\t\t\t\t>> Name: %s\n\t\t\t\t>> Filesize: %d MB",
+										p.getFileName(), filesize / 1024 / 1024));
 								si.setVideoFileName(p.toString());
 								si.setSubFileName(f[0] + ".srt");
 								si.setSubDownloadRequired(true);
@@ -386,12 +386,15 @@ public class SubFinderMain implements Serializable {
 							}
 
 							if (f[1].equalsIgnoreCase("srt") && subtitleFileSizeLimit < filesize / 1024) {
-								System.out.println(String.format("\t\t\t - Found subtitle file: %s, filesize (KB): %d",
-										p.toString(), filesize / 1024));
+								System.out.println(String.format(
+										"\t\t\t> Found subtitle file:\n\t\t\t\t>> Name: %s\n\t\t\t\t>> Filesize: %d KB",
+										p.getFileName(), filesize / 1024));
 								si.setSubFileName(p.toString());
 								si.setSubDownloadRequired(false);
 							}
 						}
+
+						System.out.println();
 					} catch (IOException e) {
 						throw new IllegalStateException(
 								"Could not fetch provided folder and its content. Terminating...");
@@ -403,15 +406,14 @@ public class SubFinderMain implements Serializable {
 					si.setReleaser(matcher.group(7));
 					series.add(si);
 				} else {
-					System.out.println("\t\t\t - No series specific info found, probably movie.");
+					System.out.println("\t\t\t> No series specific info found.");
 				}
 			}
 
 		});
 
-		printVerbose(
-				String.format("\t - A total of %s directories examined from in working directory.", series.size()));
-		System.out.println(String.format("#2 - Fetching content of the provided directory: FINISHED!\n\n"));
+		printVerbose(String.format("\tA total of %s directories examined in working directory.", series.size()));
+		System.out.println(String.format("#2 FINISHED\n\n"));
 	}
 
 	/**
@@ -431,9 +433,9 @@ public class SubFinderMain implements Serializable {
 	 * @throws IllegalStateException
 	 */
 	private static void prepareDownload() throws IllegalStateException {
-		System.out.println("#3 - Collecting required files to be downloaded.");
+		System.out.println("#3 Collecting required files to download...");
 		if (series.size() == 0) {
-			System.out.println("Nothing to process, no series found.");
+			System.out.println("\tNothing to process, no series found.");
 		}
 
 		RssReader reader = new RssReader();
@@ -445,46 +447,43 @@ public class SubFinderMain implements Serializable {
 
 					List<Item> subs = reader.read(seriesRSSURL.toString()).collect(Collectors.toList());
 
-					printVerbose(String.format(
-							"\t\t - Fetching RSS URL for series %s (mapping ID: %d), episode %s, releaser: %s, quality: %s):",
-							s.getTitle(), s.getId(), s.getUpperCombinedSandE(false), s.getReleaser(), s.getQuality()));
+					printVerbose(String.format("\tChecking %s (episode %s, releaser: %s, quality: %s):", s.getTitle(),
+							s.getUpperCombinedSandE(false), s.getReleaser(), s.getQuality()));
 
-					printVerbose(String.format("\t\t\t - Series RSS URL: %s", seriesRSSURL));
+					printVerbose(String.format("\t\t- RSS URL: %s", seriesRSSURL));
 
 					for (Item sub : subs) {
 						String RSSItem = sub.getTitle().get().toUpperCase().replaceAll(":", "");
 
-						printVerbose(String.format("\t\t\t\t > Checking subtitle release: %s", RSSItem));
-
 						if (RSSItem.contains(s.getUpperCombinedSandE(true)) && RSSItem.contains(s.getUpperReleaser())) {
 							downloadables.put(s, sub.getLink().get());
-							printVerbose("\t\t\t - Found a matching subtitle file:");
-							printVerbose(String.format("\t\t\t\t > Download URL: %s", sub.getLink().get()));
+							printVerbose(String.format("\t\t\t> Match found: %s", RSSItem));
+							printVerbose(String.format("\t\t\t\t>> URL: %s", sub.getLink().get()));
 							break;
+						} else {
+							printVerbose(String.format("\t\t\t> No match found: %s", RSSItem));
 						}
 					}
-					
-					printVerbose("");
-
+					System.out.println();
 				} catch (IOException e) {
-					throw new IllegalStateException("Network or URL error occured, terminatenig...");
+					throw new IllegalStateException("Network or URL error occured, terminating!");
 				}
 			} else {
 				printVerbose(
-						String.format("\t\t - Skipping series with ID %s because it has a valid subtitle.", s.getId()));
+						String.format("\tSkipping %s %s (releaser: %s, quality: %s) because it has a valid subtitle.\n",
+								s.getTitle(), s.getUpperCombinedSandE(false), s.getUpperReleaser(), s.getQuality()));
 			}
 		});
 
-		printVerbose(String.format("\t - A total of %s files will be downloaded.", downloadables.size()));
-		System.out.println("#3 - Collecting required files to be downloaded: FINISHED!\n\n");
+		printVerbose(String.format("\tDownloading a total of %s file(s).", downloadables.size()));
+		System.out.println("#3 FINISHED\n\n");
 	}
 
 	private static void downloadFiles() throws IllegalStateException {
-		System.out.println("#4 - Downloading prepared files...");
+		System.out.println("#4 Downloading prepared files...");
 
 		if (downloadables.size() == 0) {
-			System.out.println(
-					"\tNothing will be downloaded beacuse there is/are no prepared files. Check back later! :)");
+			System.out.println("\tNothing will be downloaded.");
 		} else {
 			try {
 				Path savePath = null;
@@ -541,11 +540,11 @@ public class SubFinderMain implements Serializable {
 								+ matcher.group(2));
 
 						BufferedInputStream inputStream = new BufferedInputStream(downloadURL.openStream());
-						printVerbose(String.format("\t - Downloading file from URL: %s", downloadURL));
+						printVerbose("\tFile downloaded:");
+						printVerbose(String.format("\t\t- From: %s", downloadURL));
 
 						if (testMode) {
-							System.out.println(
-									String.format("\t\tFile would be downloaded to location: %s", savePath.toString()));
+							System.out.println(String.format("\t\t- To: %s", savePath.toString()));
 						} else {
 							FileOutputStream fileOS = new FileOutputStream(savePath.toString());
 
@@ -558,8 +557,9 @@ public class SubFinderMain implements Serializable {
 							fileOS.close();
 							inputStream.close();
 
-							printVerbose(String.format("\t\tFile successfully downloaded to: %s", savePath.toString()));
+							printVerbose(String.format("\t\t- To: %s", savePath.toString()));
 						}
+						System.out.println();
 					}
 				}
 			} catch (Exception e) {
@@ -567,7 +567,7 @@ public class SubFinderMain implements Serializable {
 			}
 		}
 
-		System.out.println("#4 - Downloading prepared files: FINISHED.");
+		System.out.println("#4 FINISHED");
 	}
 
 	private static void disableSslVerification() {
