@@ -1,3 +1,4 @@
+```bash
 java -jar ~/SubFinder.jar -V -M /home/user/SubFinderConfig.properties -F /home/folder/
 
 
@@ -60,3 +61,4 @@ All tasks are completed. Bye!
 
 
 =================================================
+```
