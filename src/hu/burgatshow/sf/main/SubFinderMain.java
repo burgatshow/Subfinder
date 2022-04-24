@@ -455,7 +455,11 @@ public class SubFinderMain implements Serializable {
 					for (Item sub : subs) {
 						String RSSItem = sub.getTitle().get().toUpperCase().replaceAll(":", "");
 
-						if (RSSItem.contains(s.getUpperCombinedSandE(true)) && RSSItem.contains(s.getUpperReleaser())) {
+						// Beacuse there is no option to filter the RSS feed by season, immediately
+						// skipping items which is irrelevant
+						if (!RSSItem.contains(s.getUpperCombinedSandE(true))) {
+							break;
+						} else if (RSSItem.contains(s.getUpperReleaser())) {
 							downloadables.put(s, sub.getLink().get());
 							printVerbose(String.format("\t\t\t> Match found: %s", RSSItem));
 							printVerbose(String.format("\t\t\t\t>> URL: %s", sub.getLink().get()));
