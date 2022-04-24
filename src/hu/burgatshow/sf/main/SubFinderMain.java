@@ -53,7 +53,7 @@ public class SubFinderMain implements Serializable {
 					"-V", "--verbose", "-T", "--test", "-H", "--help"));
 	private static Map<String, String> parsedArgs = new HashMap<String, String>();
 
-	private static Set<SeriesInfo> series = new TreeSet<SeriesInfo>();
+	private static List<SeriesInfo> series = new ArrayList<SeriesInfo>();
 	private static Map<Object, String> downloadables = new HashMap<Object, String>();
 	private static Map<String, String> seriesNameIdMap = new TreeMap<String, String>();
 
@@ -339,7 +339,7 @@ public class SubFinderMain implements Serializable {
 			printVerbose("\t - The file is readable by the tool, let's read...");
 		}
 
-		Pattern pattern = Pattern.compile("(.*)S([0-9]{1,2})E([0-9]{1,2})(.*)(720|1080)(.*)-([a-zA-Z\\-]+)");
+		Pattern pattern = Pattern.compile("(.*)S([0-9]{1,2})E([0-9]{1,2})(.*)(720|1080|2160)(.*)-([a-zA-Z\\-]+)");
 
 		Files.list(videoFolder).sorted().filter(Files::isDirectory).forEach(path -> {
 			String name = path.getFileName().toString();
@@ -442,21 +442,29 @@ public class SubFinderMain implements Serializable {
 				try {
 					StringBuffer seriesRSSURL = new StringBuffer("https://www.feliratok.info/?ny=magyar&rss=")
 							.append(s.getId());
+
 					List<Item> subs = reader.read(seriesRSSURL.toString()).collect(Collectors.toList());
 
 					printVerbose(String.format(
-							"\t\t - Fetching RSS URL for series %s (mapping ID: %d), episode %s, releaser: %s)",
-							s.getTitle(), s.getId(), s.getUpperCombinedSandE(false), s.getReleaser()));
+							"\t\t - Fetching RSS URL for series %s (mapping ID: %d), episode %s, releaser: %s, quality: %s):",
+							s.getTitle(), s.getId(), s.getUpperCombinedSandE(false), s.getReleaser(), s.getQuality()));
+
+					printVerbose(String.format("\t\t\t - Series RSS URL: %s", seriesRSSURL));
+
 					for (Item sub : subs) {
 						String RSSItem = sub.getTitle().get().toUpperCase().replaceAll(":", "");
 
+						printVerbose(String.format("\t\t\t\t > Checking subtitle release: %s", RSSItem));
+
 						if (RSSItem.contains(s.getUpperCombinedSandE(true)) && RSSItem.contains(s.getUpperReleaser())) {
 							downloadables.put(s, sub.getLink().get());
-							printVerbose("\t\t - Found a matching subtitle file!");
-							printVerbose(String.format("\t\t\t - Download URL: %s", sub.getLink().get()));
+							printVerbose("\t\t\t - Found a matching subtitle file:");
+							printVerbose(String.format("\t\t\t\t > Download URL: %s", sub.getLink().get()));
 							break;
 						}
 					}
+					
+					printVerbose("");
 
 				} catch (IOException e) {
 					throw new IllegalStateException("Network or URL error occured, terminatenig...");
