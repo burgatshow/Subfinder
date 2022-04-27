@@ -3,7 +3,7 @@
 Small command line tool to get subtitles from https://feliratok.info
 
 ## Purpose
-This tool is designed to download proper subtitle files from [Feliratok.info](https://feliratok.info) (a hungarian site for subtitles for movies and series). The tool is taking responsibility of the proper release, so if there is no subtitle
+This tool is designed to download proper subtitle files from [Feliratok.eu](https://feliratok.eu) (a hungarian site for subtitles for movies and series). The tool is taking responsibility of the proper release, so if there is no subtitle
 for the specific release, it will not download anything. If it finds the proper subtitle, it will download it and place it next to the video
 file with the same format like the original video file has. Movies, and other files will be ignored.
 
