@@ -1,6 +1,6 @@
 # SubFinder
 
-Small command line tool to get subtitles from https://feliratok.info
+Small command line tool to get subtitles from https://feliratok.eu
 
 ## Purpose
 This tool is designed to download proper subtitle files from [Feliratok.eu](https://feliratok.eu) (a hungarian site for subtitles for movies and series). The tool is taking responsibility of the proper release, so if there is no subtitle
