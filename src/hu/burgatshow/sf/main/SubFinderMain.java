@@ -236,7 +236,7 @@ public class SubFinderMain implements Serializable {
 	 */
 	private static void dumpHelp() {
 		System.out.println(
-				"\nThis tool is designed to download proper subtitle files from https://feliratok.info.\nThe tool is taking responsibility of the proper release, so if there is no subtitle \nfor the specific release, it will not download anything.\n\nIf it finds the proper subtitle, it will download it and place it next to the video\nfile with the same format like the original video file has.\n");
+				"\nThis tool is designed to download proper subtitle files from https://feliratok.eu.\nThe tool is taking responsibility of the proper release, so if there is no subtitle \nfor the specific release, it will not download anything.\n\nIf it finds the proper subtitle, it will download it and place it next to the video\nfile with the same format like the original video file has.\n");
 
 		System.out.println("Usage:\n\tjava -jar SubFinder.jar --folder path --mapping path [ -ESVTH ]\n");
 
@@ -442,7 +442,7 @@ public class SubFinderMain implements Serializable {
 		series.forEach(s -> {
 			if (0 != s.getId() && s.isSubDownloadRequired()) {
 				try {
-					StringBuffer seriesRSSURL = new StringBuffer("https://www.feliratok.info/?ny=magyar&rss=")
+					StringBuffer seriesRSSURL = new StringBuffer("https://www.feliratok.eu/?ny=magyar&rss=")
 							.append(s.getId());
 
 					List<Item> subs = reader.read(seriesRSSURL.toString()).collect(Collectors.toList());
@@ -539,7 +539,7 @@ public class SubFinderMain implements Serializable {
 					Matcher matcher = downloadLinkPattern.matcher(html.toString());
 
 					if (matcher.find()) {
-						URL downloadURL = new URL("https://feliratok.info/index.php?action=letolt&fnev="
+						URL downloadURL = new URL("https://feliratok.eu/index.php?action=letolt&fnev="
 								+ URLEncoder.encode(matcher.group(1), StandardCharsets.UTF_8.toString()) + "&felirat="
 								+ matcher.group(2));
 
