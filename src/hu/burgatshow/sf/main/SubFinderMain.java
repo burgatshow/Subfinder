@@ -442,8 +442,10 @@ public class SubFinderMain implements Serializable {
 		series.forEach(s -> {
 			if (0 != s.getId() && s.isSubDownloadRequired()) {
 				try {
-					StringBuffer seriesRSSURL = new StringBuffer("https://www.feliratok.eu/?ny=magyar&rss=")
+					StringBuffer seriesRSSURL = new StringBuffer("https://feliratok.eu/?ny=magyar&rss=")
 							.append(s.getId());
+					
+					reader.readAsync(seriesRSSURL.toString());
 
 					List<Item> subs = reader.read(seriesRSSURL.toString()).collect(Collectors.toList());
 
@@ -456,8 +458,10 @@ public class SubFinderMain implements Serializable {
 						String RSSItem = sub.getTitle().get().toUpperCase().replaceAll(":", "");
 
 						// Beacuse there is no option to filter the RSS feed by season, immediately
-						// skipping items which is irrelevant
+						// skipping items which is irrelevant or not hungarian subtitle
 						if (!RSSItem.contains(s.getUpperCombinedSandE(true))) {
+							break;
+						} else if (!RSSItem.toLowerCase().contains("[magyar]")) {
 							break;
 						} else if (RSSItem.contains(s.getUpperReleaser())) {
 							downloadables.put(s, sub.getLink().get());
@@ -470,7 +474,7 @@ public class SubFinderMain implements Serializable {
 					}
 					System.out.println();
 				} catch (IOException e) {
-					throw new IllegalStateException("Network or URL error occured, terminating!");
+					throw new IllegalStateException("Network or URL error occured, terminating!", e);
 				}
 			} else {
 				printVerbose(
